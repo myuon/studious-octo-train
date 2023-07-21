@@ -5,10 +5,15 @@ import os
 import streamlit as st
 import pandas as pd
 import io
+import codecs
 
 
 def csv_string_to_df(csv_string):
     return pd.read_csv(io.StringIO(csv_string))
+
+
+def add_bom(csv_string: str):
+    return (codecs.BOM_UTF8 + csv_string.encode("utf-8")).decode("utf-8")
 
 
 guidance.llm = guidance.llms.OpenAI("gpt-4-0613", api_key=os.environ["OPENAI_API_KEY"])
@@ -41,19 +46,6 @@ def detect_document(content):
                         words_grouped_by_y[y] = [word]
 
                 for words in words_grouped_by_y.values():
-                    print(
-                        "{},{}: {}".format(
-                            words[0].bounding_box.vertices[0].x,
-                            words[0].bounding_box.vertices[0].y,
-                            "".join(
-                                [
-                                    "".join([symbol.text for symbol in word.symbols])
-                                    for word in words
-                                ]
-                            ),
-                        )
-                    )
-
                     blocks.append(
                         {
                             "x": words[0].bounding_box.vertices[0].x,
@@ -125,6 +117,10 @@ if file is not None:
         )
     )
 
-    st.text("テーブル表示")
+    st.download_button(
+        "CSVをダウンロード", add_bom(csv), "table-extract.csv", "text/csv", key="download-csv"
+    )
+
+    st.text("プレビュー")
 
     st.dataframe(csv_string_to_df(csv))
