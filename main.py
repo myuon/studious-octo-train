@@ -6,6 +6,7 @@ import streamlit as st
 import pandas as pd
 import io
 import codecs
+import json
 
 
 def csv_string_to_df(csv_string):
@@ -18,9 +19,10 @@ def add_bom(csv_string: str):
 
 guidance.llm = guidance.llms.OpenAI("gpt-4-0613", api_key=os.environ["OPENAI_API_KEY"])
 
-credentials = service_account.Credentials.from_service_account_file(
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
-)
+credentials_json = os.environ["GOOGLE_APPLICATION_CREDENTIALS_JSON"]
+credentials_info = json.loads(credentials_json)
+credentials = service_account.Credentials.from_service_account_info(credentials_info)
+
 client = vision.ImageAnnotatorClient(credentials=credentials)
 
 
