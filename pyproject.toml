@@ -1,0 +1,26 @@
+[project]
+name = "receipt-reader"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "myuon", email = "ioi.joi.koi.loi@gmail.com" }
+]
+dependencies = [
+    "google-cloud-vision>=3.4.4",
+    "guidance>=0.0.64",
+    "streamlit>=1.25.0",
+    "watchdog>=3.0.0",
+]
+readme = "README.md"
+requires-python = ">= 3.8"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = []
+
+[tool.hatch.metadata]
+allow-direct-references = true
