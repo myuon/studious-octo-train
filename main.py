@@ -101,9 +101,17 @@ OCR結果:
 file = st.file_uploader("画像ファイルを選択")
 
 if file is not None:
+    st.image(file, caption="選択された画像", use_column_width=True)
+
     loading_text = st.text("読み取り中...")
 
     ocr_blocks = detect_document(file.getvalue())
+
+    with st.expander("生データ"):
+        st.write(
+            [f'{block["x"]},{block["y"]}: {block["text"]}' for block in ocr_blocks]
+        )
+
     csv = retrieve_table(ocr_blocks)
 
     loading_text.text("✅ DONE")
