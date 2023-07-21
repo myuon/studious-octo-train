@@ -1,9 +1,15 @@
-import sys
 from google.cloud import vision
 from google.oauth2 import service_account
 import guidance
 import os
 import streamlit as st
+import pandas as pd
+import io
+
+
+def csv_string_to_df(csv_string):
+    return pd.read_csv(io.StringIO(csv_string))
+
 
 guidance.llm = guidance.llms.OpenAI("gpt-4-0613", api_key=os.environ["OPENAI_API_KEY"])
 
@@ -78,7 +84,9 @@ def retrieve_table(blocks):
 {{#user}}
 司令: 領収書をOCRにかけた結果を渡します。
 読み取られた文字列を、「x座標,y座標: ラベル」の形式で書かれています。
-ここから、領収書の内容を抜き出してCSVにしてください。CSVにする際は、数字に含まれるカンマでセルが分割されないように気をつけてください。また、抜き出したCSVの前後に[csv]と[/csv]をマーカーとしてつけてください。
+ここから、領収書の内容を抜き出してCSVにしてください。CSVにする際は、数字に含まれるカンマでセルが分割されないように、数字はダブルクォートで囲ってください。
+
+また、抜き出したCSVの前後に[csv]と[/csv]をマーカーとしてつけてください。
 
 表の内容には、項目名と金額が含まれます。
 
@@ -116,3 +124,7 @@ if file is not None:
             csv
         )
     )
+
+    st.text("テーブル表示")
+
+    st.dataframe(csv_string_to_df(csv))
